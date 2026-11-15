@@ -74,17 +74,17 @@ body.is-drawing {
 }
 
 .brand {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
   padding: 0.25rem 0.35rem 0.5rem;
   animation: rise 0.7s ease both;
 }
 
-.brand__mark {
-  margin: 0 0 0.35rem;
-  font-family: var(--display);
-  font-size: clamp(1.8rem, 5vw, 2.6rem);
-  font-weight: 700;
-  letter-spacing: -0.03em;
-  color: var(--leaf-deep);
+.brand__logo {
+  height: 168px;
+  width: auto;
+  flex: none;
 }
 
 .brand__title {
@@ -448,6 +448,12 @@ body.is-drawing {
   text-align: center;
 }
 
+.draw-stage__logo {
+  height: 92px;
+  width: auto;
+  margin: 0 auto 0.85rem;
+}
+
 .draw-stage__badge {
   display: inline-flex;
   align-items: center;
@@ -630,6 +636,14 @@ body.is-drawing {
 }
 
 @media (max-width: 780px) {
+  .brand {
+    align-items: flex-start;
+  }
+
+  .brand__logo {
+    height: 132px;
+  }
+
   .controls {
     flex-direction: column;
     align-items: stretch;
@@ -675,6 +689,10 @@ body.is-drawing {
   .brand {
     animation: none;
     margin-bottom: 0.5rem;
+  }
+
+  .brand__logo {
+    height: 120px;
   }
 
   .panel--protocol {

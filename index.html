@@ -10,18 +10,20 @@
       href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Unbounded:wght@600;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=20260901-4" />
+    <link rel="stylesheet" href="styles.css?v=20261115-1" />
   </head>
   <body>
     <div class="bg" aria-hidden="true"></div>
 
     <main class="shell">
       <header class="brand">
-        <p class="brand__mark">Dog Draw</p>
-        <h1 class="brand__title">Жеребьёвка</h1>
-        <p class="brand__lead">
-          Укажите ссылку на Google Таблицу, проведите жеребьёвку на виду у всех и получите протокол.
-        </p>
+        <img class="brand__logo" src="logo-main.svg" alt="Собачий патруль" />
+        <div class="brand__text">
+          <h1 class="brand__title">Жеребьёвка</h1>
+          <p class="brand__lead">
+            Укажите ссылку на Google Таблицу, проведите жеребьёвку на виду у всех и получите протокол.
+          </p>
+        </div>
       </header>
 
       <section class="panel" aria-labelledby="import-heading">
@@ -142,6 +144,7 @@
 
     <div id="draw-stage" class="draw-stage" hidden aria-live="assertive">
       <div class="draw-stage__card">
+        <img class="draw-stage__logo" src="logo-main.svg" alt="Собачий патруль" />
         <p class="draw-stage__badge">Идёт жеребьёвка</p>
         <p class="draw-stage__class" id="draw-class"></p>
         <p class="draw-stage__progress" id="draw-progress">Готовим номера…</p>
