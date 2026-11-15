@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Жеребьёвка — Dog Draw</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Unbounded:wght@600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css?v=20260901-4" />
+  </head>
+  <body>
+    <div class="bg" aria-hidden="true"></div>
+
+    <main class="shell">
+      <header class="brand">
+        <p class="brand__mark">Dog Draw</p>
+        <h1 class="brand__title">Жеребьёвка</h1>
+        <p class="brand__lead">
+          Укажите ссылку на Google Таблицу, проведите жеребьёвку на виду у всех и получите протокол.
+        </p>
+      </header>
+
+      <section class="panel" aria-labelledby="import-heading">
+        <div class="panel__head">
+          <h2 id="import-heading">Список участников</h2>
+          <p class="panel__hint">
+            Вставьте ссылку на Google Таблицу (доступ: «все, у кого есть ссылка»).             Берутся строки с <strong>да</strong> в «отправлено сообщение», если такая колонка есть;
+            <strong>резерв</strong> и <strong>отказ</strong> отбрасываются. Если класса выступления
+            нет — жеребьёвка идёт одним общим списком.
+          </p>
+        </div>
+
+        <label class="field field--block">
+          <span>Ссылка на Google Таблицу</span>
+          <input
+            id="sheet-url"
+            type="text"
+            placeholder="https://docs.google.com/spreadsheets/d/…"
+            autocomplete="off"
+            spellcheck="false"
+          />
+        </label>
+        <div class="row">
+          <button type="button" id="load-sheet" class="btn btn--solid">Загрузить по ссылке</button>
+          <button type="button" id="clear-roster" class="btn btn--ghost btn--danger">Очистить</button>
+          <p id="import-status" class="status" aria-live="polite"></p>
+        </div>
+
+        <details class="advanced">
+          <summary>Другие способы (CSV / вставка)</summary>
+          <div class="import-actions">
+            <label class="btn btn--ghost file-btn">
+              Загрузить CSV
+              <input id="file-input" type="file" accept=".csv,text/csv,.tsv,text/tab-separated-values" hidden />
+            </label>
+            <button type="button" id="paste-btn" class="btn btn--ghost">Вставить из буфера</button>
+          </div>
+          <label class="field field--block">
+            <span>Или вставьте таблицу сюда</span>
+            <textarea
+              id="table-input"
+              rows="4"
+              placeholder="ФИО	Порода	Кличка	Класс выступления&#10;Иванова Анна	лабрадор	Барон	А1"
+            ></textarea>
+          </label>
+          <div class="row">
+            <button type="button" id="load-table" class="btn btn--ghost">Загрузить из поля</button>
+          </div>
+        </details>
+
+        <div class="table-wrap">
+          <table class="data-table" id="roster-table">
+            <thead>
+              <tr>
+                <th>№</th>
+                <th>ФИО</th>
+                <th>Порода</th>
+                <th>Кличка</th>
+                <th class="col-class">Класс выступления</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="roster-body"></tbody>
+          </table>
+          <p id="roster-empty" class="empty">Список пуст — вставьте ссылку на Google Таблицу.</p>
+        </div>
+      </section>
+
+      <section class="panel panel--action" aria-labelledby="draw-heading">
+        <div class="panel__head">
+          <h2 id="draw-heading">Жеребьёвка</h2>
+          <p class="panel__hint">
+            Можно жеребьёвать <strong>одним общим списком</strong> или
+            <strong>отдельно по классам</strong> (нумерация с 1 в каждом варианте).
+          </p>
+        </div>
+
+        <div class="controls">
+          <label class="field field--inline" id="draw-mode-field">
+            <span>Как жеребьёвать</span>
+            <select id="draw-mode">
+              <option value="flat">Одним списком, без классов</option>
+              <option value="by-class">По классам отдельно</option>
+            </select>
+          </label>
+          <label class="field field--inline" id="class-filter-field">
+            <span>Какие классы жеребьёвать</span>
+            <select id="class-filter">
+              <option value="">Все классы</option>
+            </select>
+          </label>
+          <label class="field field--inline">
+            <span>Название соревнования</span>
+            <input id="event-title" type="text" placeholder="Например, Кубок весны" />
+          </label>
+          <button type="button" id="draw-btn" class="btn btn--accent" disabled>
+            Провести жеребьёвку
+          </button>
+          <p id="draw-lock-reason" class="status" hidden></p>
+        </div>
+      </section>
+
+      <section class="panel panel--protocol" id="protocol-section" hidden aria-labelledby="protocol-heading">
+        <div class="panel__head protocol-head">
+          <div>
+            <h2 id="protocol-heading">Протокол жеребьёвки</h2>
+            <p class="panel__hint" id="protocol-meta"></p>
+          </div>
+          <div class="row row--end row--flush">
+            <button type="button" id="copy-btn" class="btn btn--ghost">Копировать</button>
+            <button type="button" id="print-btn" class="btn btn--ghost">Печать</button>
+          </div>
+        </div>
+
+        <div id="protocol-groups" class="protocol-groups"></div>
+      </section>
+    </main>
+
+    <div id="draw-stage" class="draw-stage" hidden aria-live="assertive">
+      <div class="draw-stage__card">
+        <p class="draw-stage__badge">Идёт жеребьёвка</p>
+        <p class="draw-stage__class" id="draw-class"></p>
+        <p class="draw-stage__progress" id="draw-progress">Готовим номера…</p>
+        <div class="draw-stage__slot">
+          <p class="draw-stage__label">Сейчас определяется</p>
+          <p class="draw-stage__number" id="draw-number">—</p>
+          <p class="draw-stage__dog" id="draw-dog">…</p>
+          <p class="draw-stage__meta" id="draw-meta"></p>
+        </div>
+        <ol class="draw-stage__list" id="draw-live-list"></ol>
+      </div>
+    </div>
+
+    <!-- Обычный скрипт (не module): так страница работает и при открытии файла напрямую -->
+    <script src="app.js?v=20260901-4"></script>
+  </body>
+</html>
